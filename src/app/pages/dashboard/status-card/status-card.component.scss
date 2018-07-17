@@ -3,8 +3,7 @@
 
 @include nb-install-component() {
   nb-card {
-    flex-direction: row;
-    align-items: center;
+     align-items: center;
     height: 6rem;
     overflow: visible;
 

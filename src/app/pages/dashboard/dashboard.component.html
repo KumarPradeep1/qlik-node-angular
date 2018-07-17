@@ -4,9 +4,9 @@
 <div class="row" *ngIf="getKPI">
 <div class="col-md-4" *ngFor="let k of getKPI">
 <ngx-status-card [title]="k.title" type="primary"  >  
-<i *ngFor="let d of k.data"> 
+<p *ngFor="let d of k.data"> 
 {{d[0].qText}}
-</i>
+</p>
 </ngx-status-card>
 </div>
 </div>

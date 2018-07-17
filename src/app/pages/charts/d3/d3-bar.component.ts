@@ -40,29 +40,32 @@ export class D3BarComponent implements OnDestroy {
     this.apiservice.getAppinfos().subscribe(data=>{ 
         this.allinfos = data; 
         this.allinfos.forEach(element => {
-          if(element.type == 'barchart'){
-            let elementData = element.data;
-            elementData.forEach(e => {
-              this.getBarchart.push({name: e[0].qText,value: e[1].qText}) 
-            });
-            
-          }
+          if(this.chartsType.includes(element.type)){
+            let elementData = element.data; 
+            this.getBarchart = [];
+            if(elementData!=''){ 
+              elementData.forEach(e => {
+                let qValue = e[1].qNum == "NaN" ? 0 : e[1].qNum;
+                this.getBarchart.push({name: e[0].qText,value: qValue}) 
+              });  
+              this.getBValues.push({data:this.getBarchart,title:element.title});  
+            } 
+        }
         }); 
     })
     }else{
-      accessValue.forEach(element => { 
-        console.log(element.type);
+      accessValue.forEach(element => {  
         if(this.chartsType.includes(element.type)){
             let elementData = element.data; 
             this.getBarchart = [];
             if(elementData!=''){ 
               elementData.forEach(e => {
-                this.getBarchart.push({name: e[0].qText,value: e[1].qText}) 
+                let qValue = e[1].qNum == "NaN" ? 0 : e[1].qNum;
+                this.getBarchart.push({name: e[0].qText,value: qValue}) 
               });  
               this.getBValues.push({data:this.getBarchart,title:element.title});  
             } 
         }    
-       // this.results = this.getBarchart;
       })
       console.log(this.getBValues); 
     }

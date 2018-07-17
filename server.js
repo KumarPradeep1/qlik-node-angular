@@ -9,6 +9,9 @@ var objects_info = [];
 let required_objects = ["kpi","barchart","combochart", "linechart","table"];
 
 let appid = '4fdd8d12-ef72-4edc-b10d-2284ca426a84';
+// let appid = '8d1dbb5c-2df6-4f61-820b-7f0528722a75';
+// let appid = 'b5dd4c99-f4d5-4c0a-91ff-c9a9634cb39c'
+
 let qlik_app = ""
 let HyperCubeDefParams = [{
     qTop: 0,
@@ -31,7 +34,7 @@ let config = {
   headers: {
   'Content-Type':'application/json',
   'x-qlik-xrfkey' : 'abcdefghijklmnop',
-  'hdr-usr': 'MASHEY\\Techmango'
+  'hdr-usr': 'MASHEY\\andrew'
   }
 }
 

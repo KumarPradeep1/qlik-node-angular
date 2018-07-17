@@ -5,15 +5,12 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./status-card.component.scss'],
   template: `
     <nb-card>
-      <div class="icon-container">
-        <div class="icon {{ type }}">
+    <div class="details">
+        <div class="title">{{ title }}<span>{{ qText }} </span></div> 
+      </div> 
+        <div class="block">
           <ng-content></ng-content>
-        </div>
-      </div>
-
-      <div class="details">
-        <div class="title">{{ title }}</div> 
-      </div>
+        </div> 
     </nb-card>
   `,
 })
