@@ -1,0 +1,23 @@
+<nb-card >  
+<nb-card-header>KPI</nb-card-header> 
+<nb-card-body>
+<div class="row" *ngIf="getKPI">
+<div class="col-md-4" *ngFor="let k of getKPI">
+<ngx-status-card [title]="k.title" type="primary"  >  
+<i *ngFor="let d of k.data"> 
+{{d[0].qText}}
+</i>
+</ngx-status-card>
+</div>
+</div>
+<div class="row" *ngIf="getKPI == ''">
+<div class="col-md-4" >
+Please wait....
+</div>
+</div>
+</nb-card-body>
+</nb-card>
+
+
+
+
