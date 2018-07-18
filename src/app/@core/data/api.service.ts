@@ -11,7 +11,7 @@ export class ApiService {
   getDoclists(){
     return this.http.get(this.serviceurl+'/doclists');
   }
-  getAppinfos(){
-    return this.http.get(this.serviceurl+'/appinfo');
+  getAppinfos(appid){
+    return this.http.get(this.serviceurl+'/appinfo?appid='+appid);
   }
 }

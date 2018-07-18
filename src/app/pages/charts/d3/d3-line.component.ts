@@ -85,7 +85,7 @@ export class D3LineComponent implements OnDestroy {
   getAppinfos(){
     let accessValue = this.accessStorage.getFromLocal('allInfos');
     if(accessValue == ''){ 
-    this.apiservice.getAppinfos().subscribe(data=>{ 
+    this.apiservice.getAppinfos('test').subscribe(data=>{ 
         this.allinfos = data; 
         this.allinfos.forEach(element => {
           if(element.type == 'linechart'){

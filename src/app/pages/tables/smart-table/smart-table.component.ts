@@ -34,7 +34,7 @@ export class SmartTableComponent {
   getAppinfos(){
     let accessValue = this.accessStorage.getFromLocal('allInfos'); 
     if(!accessValue){ 
-     this.apiservice.getAppinfos().subscribe(data=>{ 
+     this.apiservice.getAppinfos('test').subscribe(data=>{ 
         this.allinfos = data; 
         this.accessStorage.saveInLocal('allInfos',this.allinfos);
         this.allinfos.forEach(element => {

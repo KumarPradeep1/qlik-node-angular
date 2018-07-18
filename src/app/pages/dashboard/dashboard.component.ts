@@ -3,7 +3,7 @@ import { NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators/takeWhile' ;
 import { ApiService } from '../../@core/data/api.service';
 import { StorageService } from '../../@core/data/storage.service';
-import { MasheyService } from '../../@core/data/mashey.service';
+import { MasheyService } from '../../@core/data/mashey.service'; 
 
 interface CardSettings {
   title: string;
@@ -20,8 +20,10 @@ export class DashboardComponent implements OnDestroy {
 
   private alive = true;
   private doclists:any = [];
+  private docReturn:any = [];
   private allinfos:any = [];
   private getKPI:any = [];
+  private objecttype:string = 'kpi';
 
   lightCard: CardSettings = {
     title: 'Light',
@@ -86,58 +88,43 @@ export class DashboardComponent implements OnDestroy {
       .subscribe(theme => { 
         this.statusCards = this.statusCardsByThemes[theme.name];
     });
-    this.getDoclists(); 
+    this.getDoclists();  
   }
+  
   getDoclists(){
     this.masheyservice.loadSpinner_show();
     let docValue = this.accessStorage.getFromLocal('doclists');
     if(!docValue){
       this.apiservice.getDoclists().subscribe(docdata=>{
-        this.returnDoclists(docdata); 
-        this.accessStorage.saveInLocal('doclists',this.doclists);
+        this.docReturn = docdata;
+        if(!this.docReturn.error){
+          this.returnDoclists(docdata); 
+          this.accessStorage.saveInLocal('doclists',this.doclists);
+        }else{
+          console.log(this.docReturn.error);
+          this.masheyservice.loadSpinner_hide(); 
+        }
+       
       });
     }else{
       this.returnDoclists(docValue); 
-    }
-   
-  }
-  returnDoclists(docdata){
-    this.doclists = docdata;  
-    setTimeout(() => {
-    this.masheyservice.loadSpinner_hide();
-    },2000);
-  }
-  onAppChange(value){ 
-    if(value){
-      this.accessStorage.saveInLocal('appId',value);
     } 
   }
-  getAppinfos(){
-    let current_app = this.accessStorage.getFromLocal('current_app');
 
-    if (current_app != undefined){
-      let all_infos = this.accessStorage.getFromLocal('allInfos');
-      let app_data = all_infos[current_app]
-      this.getKPI = this.get_kpi_data(app_data)
-    }else{
-      this.apiservice.getAppinfos().subscribe(data=>{
-        let appid = Object.keys(data)[0]
-        this.accessStorage.saveInLocal('current_app',appid);
-        this.accessStorage.saveInLocal('allInfos',data);
-        this.getKPI = this.get_kpi_data(data[appid])
-      })
+  returnDoclists(docdata){
+    this.doclists = docdata;   
+    this.masheyservice.loadSpinner_hide(); 
+  }
+
+  onAppChange(value){ 
+    if(value){ 
+      this.getAppData(value);   
     }
-  }
+  } 
 
-  get_kpi_data(results){
-    let data = []
-    results.forEach(element => {
-      if(element.type == 'kpi'){
-        data.push(element);
-      }
-    });
-    return data;
-  }
+  async getAppData(value){ 
+    this.getKPI = await this.masheyservice.loadAppinfos(value,this.objecttype);   
+  }   
 
   ngOnDestroy() {
     this.alive = false;

@@ -5,8 +5,7 @@ export class StorageService {
   constructor() { 
   }
   saveInLocal(key, val) {
-    localStorage.setItem(key, JSON.stringify(val)); 
-    console.log(this.getFromLocal(key))
+    localStorage.setItem(key, JSON.stringify(val));  
   } 
    getFromLocal(key) { 
     this.data = JSON.parse(localStorage.getItem(key)); 

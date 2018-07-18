@@ -37,7 +37,7 @@ export class D3BarComponent implements OnDestroy {
     let accessValue = this.accessStorage.getFromLocal('allInfos');
     console.log(accessValue);
     if(accessValue == ''){ 
-    this.apiservice.getAppinfos().subscribe(data=>{ 
+    this.apiservice.getAppinfos('test').subscribe(data=>{ 
         this.allinfos = data; 
         this.allinfos.forEach(element => {
           if(this.chartsType.includes(element.type)){
