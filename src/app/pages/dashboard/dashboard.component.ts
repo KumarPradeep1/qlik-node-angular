@@ -85,12 +85,13 @@ export class DashboardComponent implements OnDestroy {
   constructor(private themeService: NbThemeService,private apiservice:ApiService,private accessStorage:StorageService,private masheyservice:MasheyService) {
     this.themeService.getJsTheme()
       .pipe(takeWhile(() => this.alive))
-      .subscribe(theme => { 
+      .subscribe(theme => {
         this.statusCards = this.statusCardsByThemes[theme.name];
     });
-    this.getDoclists();  
+    // localStorage.clear()
+    this.getDoclists();
   }
-  
+
   getDoclists(){
     this.masheyservice.loadSpinner_show();
     let docValue = this.accessStorage.getFromLocal('doclists');
@@ -98,33 +99,32 @@ export class DashboardComponent implements OnDestroy {
       this.apiservice.getDoclists().subscribe(docdata=>{
         this.docReturn = docdata;
         if(!this.docReturn.error){
-          this.returnDoclists(docdata); 
+          this.returnDoclists(docdata);
           this.accessStorage.saveInLocal('doclists',this.doclists);
         }else{
           console.log(this.docReturn.error);
-          this.masheyservice.loadSpinner_hide(); 
+          this.returnDoclists({error: "Error on API --- "+this.docReturn.error.severity});
         }
-       
       });
     }else{
-      this.returnDoclists(docValue); 
-    } 
+      this.returnDoclists(docValue);
+    }
   }
 
   returnDoclists(docdata){
-    this.doclists = docdata;   
-    this.masheyservice.loadSpinner_hide(); 
+    this.doclists = docdata;
+    this.masheyservice.loadSpinner_hide();
   }
 
-  onAppChange(value){ 
-    if(value){ 
-      this.getAppData(value);   
+  onAppChange(value){
+    if(value){
+      this.getAppData(value);
     }
-  } 
+  }
 
-  async getAppData(value){ 
-    this.getKPI = await this.masheyservice.loadAppinfos(value,this.objecttype);   
-  }   
+  async getAppData(value){
+    this.getKPI = await this.masheyservice.loadAppinfos(value,this.objecttype);
+  }
 
   ngOnDestroy() {
     this.alive = false;

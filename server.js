@@ -121,7 +121,7 @@ app.get('/appinfo/:appId', (req, res) => {
 });
 
 // Get all Docs list
-app.get('/doclists/:appId', (req, res) => {
+app.get('/doclists', (req, res) => {
   config = auth_params("aaaaa")
   qsocks.ConnectOpenApp(config)
   .then(function(connections) {

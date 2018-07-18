@@ -1,29 +1,34 @@
 <nb-card>
 <nb-card-header>App Lists</nb-card-header>
 <nb-card-body *ngIf="doclists!=''">
-    <div class="form-group">
-    <label>Select App</label>
-    <select class="form-control" (change)="onAppChange($event.target.value)">
-        <option value="">Select App</option>
-        <option *ngFor="let dl of doclists" [value]="dl.qDocId">
-            {{ dl.qDocName}}
-        </option> 
-    </select>
-</div>
+    <div class="form-group" *ngIf="!doclists.error">
+      <label>Select App</label>
+      <select class="form-control" (change)="onAppChange($event.target.value)">
+          <option value="">Select App</option>
+          <option *ngFor="let dl of doclists" [value]="dl.qDocId">
+              {{ dl.qDocName}}
+          </option>
+      </select>
+    </div>
+    <span *ngIf="doclists.error">
+      {{doclists.error}}
+    </span>
 </nb-card-body>
 </nb-card>
-<nb-card *ngIf="getKPI != ''" >  
-<nb-card-header>KPI</nb-card-header> 
+
+
+<nb-card *ngIf="getKPI != ''" >
+<nb-card-header>KPI</nb-card-header>
 <nb-card-body>
 <div class="row">
 <div class="col-md-4" *ngFor="let k of getKPI">
-<ngx-status-card [title]="k.title" type="primary"  >  
-<p *ngFor="let d of k.data"> 
+<ngx-status-card [title]="k.title" type="primary" >
+<p *ngFor="let d of k.data">
 {{d[0].qText}}
 </p>
 </ngx-status-card>
 </div>
-</div> 
+</div>
 </nb-card-body>
 </nb-card>
 
