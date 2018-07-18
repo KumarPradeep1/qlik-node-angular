@@ -8,9 +8,10 @@ var objects_info = [];
 // let skip_object_types = ["slide", "slideitem", "story","sheet", "filterpane", "listbox", "snapshot", "embeddedsnapshot"];
 let required_objects = ["kpi","barchart","combochart", "linechart","table"];
 
-let appid = '4fdd8d12-ef72-4edc-b10d-2284ca426a84';
+// let appid = '4fdd8d12-ef72-4edc-b10d-2284ca426a84';
 // let appid = '8d1dbb5c-2df6-4f61-820b-7f0528722a75';
 // let appid = 'b5dd4c99-f4d5-4c0a-91ff-c9a9634cb39c'
+let appid = '372cbc85-f7fb-4db6-a620-9a5367845dce';
 
 let qlik_app = ""
 let HyperCubeDefParams = [{
@@ -20,23 +21,24 @@ let HyperCubeDefParams = [{
     qHeight: 100
     }]
 
-// let config = {
-//     host: 'sense-demo.qlik.com',
-//     isSecure: true,
-//     prefix:'',
-// };
-
 let config = {
-  host: 'qlik.mashey.com',
-  isSecure: true,
-  prefix:'hdr',
-  appname: appid,
-  headers: {
-  'Content-Type':'application/json',
-  'x-qlik-xrfkey' : 'abcdefghijklmnop',
-  'hdr-usr': 'MASHEY\\andrew'
-  }
-}
+    host: 'sense-demo.qlik.com',
+    isSecure: true,
+    prefix:'',
+    appname: appid,
+};
+
+// let config = {
+//   host: 'qlik.mashey.com',
+//   isSecure: true,
+//   prefix:'hdr',
+//   appname: appid,
+//   headers: {
+//   'Content-Type':'application/json',
+//   'x-qlik-xrfkey' : 'abcdefghijklmnop',
+//   'hdr-usr': 'MASHEY\\andrew'
+//   }
+// }
 
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -56,8 +58,6 @@ app.get('/', (req, res) => {
 
 // Get Qlik app raw data for all elements
 app.get('/appinfo', (req, res) => {
-  console.log("^^^^^^^^^^^^^^^^^^^^^^^^^")
-  console.log("^^^^^^^^^^^^^^^^^^^^^^^^^")
 	qsocks.ConnectOpenApp(config)
   .then(function(connections) {
   	qlik_app = connections[1];
@@ -108,11 +108,15 @@ app.get('/appinfo', (req, res) => {
   	});
 
   	Promise.all(promises).then(function(values){
-  	   res.send(values);
+      result = {}
+      result[appid] = values
+  	  res.send(result);
   	});
 	})
 	.catch(function(err) {
-	console.log('Something went wrong: ', err);
+	  console.log('Something went wrong: ', err);
+    response = {error: err}
+    res.send(response);
 	})
 });
 
@@ -125,7 +129,10 @@ app.get('/doclists', (req, res) => {
     global.getDocList().then(function(doclist) {
         res.send(doclist);
     });
-    });
+  })
+  .catch(function(err) {
+    console.log('Something went wrong: ', err);
+  })
 });
 
 function elements_info(data){
