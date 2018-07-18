@@ -9,12 +9,6 @@ var objects_info = [];
 let required_objects = ["kpi","barchart","combochart", "linechart","table"];
 
 
-// let appid = '4fdd8d12-ef72-4edc-b10d-2284ca426a84';
-// let appid = '8d1dbb5c-2df6-4f61-820b-7f0528722a75';
-
-// let appid = 'b5dd4c99-f4d5-4c0a-91ff-c9a9634cb39c'
-let appid = '372cbc85-f7fb-4db6-a620-9a5367845dce';
-
 let qlik_app = ""
 let HyperCubeDefParams = [{
     qTop: 0,
@@ -22,13 +16,6 @@ let HyperCubeDefParams = [{
     qWidth: 10,
     qHeight: 100
     }]
-
-let config = {
-    host: 'sense-demo.qlik.com',
-    isSecure: true,
-    prefix:'',
-    appname: appid
-};
 
 // let config = {
 //   host: 'qlik.mashey.com',
@@ -41,6 +28,16 @@ let config = {
 //   'hdr-usr': 'MASHEY\\andrew'
 //   }
 // }
+
+function auth_params(appid){
+  let config = {
+    host: 'sense-demo.qlik.com',
+    isSecure: true,
+    prefix:'',
+    appname: appid
+  };
+  return config
+}
 
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -59,7 +56,8 @@ app.get('/', (req, res) => {
 });
 
 // Get Qlik app raw data for all elements
-app.get('/appinfo', (req, res) => {
+app.get('/appinfo/:appId', (req, res) => {
+  config = auth_params(req.params.appId)
 	qsocks.ConnectOpenApp(config)
   .then(function(connections) {
   	qlik_app = connections[1];
@@ -123,17 +121,20 @@ app.get('/appinfo', (req, res) => {
 });
 
 // Get all Docs list
-app.get('/doclists', (req, res) => {
+app.get('/doclists/:appId', (req, res) => {
+  config = auth_params("aaaaa")
   qsocks.ConnectOpenApp(config)
   .then(function(connections) {
     var global = connections[0];
     qlik_app = connections[1];
     global.getDocList().then(function(doclist) {
         res.send(doclist);
-    }); 
+    });
   })
   .catch(function(err) {
     console.log('Something went wrong: ', err);
+    response = {error: err}
+    res.send(response);
   })
 });
 
