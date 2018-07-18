@@ -5,14 +5,14 @@ import { StorageService } from './storage.service';
 import { UserService } from './users.service'; 
 import { StateService } from './state.service';
 import { SmartTableService } from './smart-table.service'; 
-
+import { MasheyService } from './mashey.service'
 const SERVICES = [
   ApiService,
   StorageService,
   UserService, ,
   StateService,
   SmartTableService, 
-
+  MasheyService 
 ];
 
 @NgModule({

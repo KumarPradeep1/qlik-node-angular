@@ -3,6 +3,7 @@ import { NbThemeService } from '@nebular/theme';
 import { takeWhile } from 'rxjs/operators/takeWhile' ;
 import { ApiService } from '../../@core/data/api.service';
 import { StorageService } from '../../@core/data/storage.service';
+import { MasheyService } from '../../@core/data/mashey.service';
 
 interface CardSettings {
   title: string;
@@ -18,6 +19,7 @@ interface CardSettings {
 export class DashboardComponent implements OnDestroy {
 
   private alive = true;
+  private doclists:any = [];
   private allinfos:any = [];
   private getKPI:any = [];
 
@@ -78,14 +80,37 @@ export class DashboardComponent implements OnDestroy {
     ],
   };
 
-  constructor(private themeService: NbThemeService,private apiservice:ApiService,private accessStorage:StorageService) {
+  constructor(private themeService: NbThemeService,private apiservice:ApiService,private accessStorage:StorageService,private masheyservice:MasheyService) {
     this.themeService.getJsTheme()
       .pipe(takeWhile(() => this.alive))
       .subscribe(theme => { 
         this.statusCards = this.statusCardsByThemes[theme.name];
     });
-
-    this.getAppinfos();
+    this.getDoclists(); 
+  }
+  getDoclists(){
+    this.masheyservice.loadSpinner_show();
+    let docValue = this.accessStorage.getFromLocal('doclists');
+    if(!docValue){
+      this.apiservice.getDoclists().subscribe(docdata=>{
+        this.returnDoclists(docdata); 
+        this.accessStorage.saveInLocal('doclists',this.doclists);
+      });
+    }else{
+      this.returnDoclists(docValue); 
+    }
+   
+  }
+  returnDoclists(docdata){
+    this.doclists = docdata;  
+    setTimeout(() => {
+    this.masheyservice.loadSpinner_hide();
+    },2000);
+  }
+  onAppChange(value){ 
+    if(value){
+      this.accessStorage.saveInLocal('appId',value);
+    } 
   }
   getAppinfos(){
     let current_app = this.accessStorage.getFromLocal('current_app');

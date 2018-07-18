@@ -6,7 +6,7 @@
 import { Component, OnInit } from '@angular/core'; 
 @Component({
   selector: 'ngx-app',
-  template: '<router-outlet></router-outlet>',
+  template: '<ngx-spinner  bdColor = "rgba(51, 51, 51, 0.8)"  size = "large"  color = "#fff"  type = "pacman"  ></ngx-spinner><router-outlet></router-outlet>',
 })
 export class AppComponent implements OnInit {
 
