@@ -9,10 +9,10 @@
               {{ dl.qDocName}}
           </option>
       </select>
-    </div>
-    <span *ngIf="doclists.error">
+    </div> 
+    <div class="alert alert-danger" *ngIf="doclists.error">
       {{doclists.error}}
-    </span>
+    </div>
 </nb-card-body>
 </nb-card>
 

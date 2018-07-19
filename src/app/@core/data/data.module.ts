@@ -9,7 +9,7 @@ import { MasheyService } from './mashey.service'
 const SERVICES = [
   ApiService,
   StorageService,
-  UserService, ,
+  UserService, 
   StateService,
   SmartTableService, 
   MasheyService 

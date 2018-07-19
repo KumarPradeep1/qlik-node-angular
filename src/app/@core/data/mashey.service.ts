@@ -2,15 +2,16 @@ import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ApiService } from './api.service';
 import { HttpClient } from '@angular/common/http'; 
-import { StorageService } from './storage.service'; 
-
+import { StorageService } from './storage.service';  
 @Injectable()
 export class MasheyService {  
-  serviceurl:string;
+  serviceurl:string; 
+  
   getKPI:any = [];
-  constructor(private http: HttpClient,private spinner: NgxSpinnerService,private apiservice:ApiService,private accessStorage:StorageService) { 
+  constructor(private http: HttpClient,private spinner: NgxSpinnerService,private accessStorage:StorageService) { 
     this.serviceurl = 'http://localhost:3005';
   }  
+   
   getDoclists(){
     return this.http.get(this.serviceurl+'/doclists');
   }
@@ -43,7 +44,7 @@ export class MasheyService {
     if (current_app != undefined && current_app == getappid){ 
       let all_infos = this.accessStorage.getFromLocal('allInfos');
           app_data = all_infos[current_app];  
-          return app_data;     
+          return this.getObjectType(app_data,objecttype);  
     }else{  
       const response = await this.getAppinfos(getappid).toPromise(); 
       if(response){

@@ -19,10 +19,10 @@ interface CardSettings {
 export class DashboardComponent implements OnDestroy {
 
   private alive = true;
-  private doclists:any = [];
+  public doclists:any = [];
   private docReturn:any = [];
   private allinfos:any = [];
-  private getKPI:any = [];
+  public getKPI:any = [];
   private objecttype:string = 'kpi';
 
   lightCard: CardSettings = {
@@ -96,7 +96,7 @@ export class DashboardComponent implements OnDestroy {
     this.masheyservice.loadSpinner_show();
     let docValue = this.accessStorage.getFromLocal('doclists');
     if(!docValue){
-      this.apiservice.getDoclists().subscribe(docdata=>{
+      this.masheyservice.getDoclists().subscribe(docdata=>{
         this.docReturn = docdata;
         if(!this.docReturn.error){
           this.returnDoclists(docdata);
@@ -105,6 +105,9 @@ export class DashboardComponent implements OnDestroy {
           console.log(this.docReturn.error);
           this.returnDoclists({error: "Error on API --- "+this.docReturn.error.severity});
         }
+      },error=>{
+        this.masheyservice.loadSpinner_hide(); 
+        console.log(error);
       });
     }else{
       this.returnDoclists(docValue);

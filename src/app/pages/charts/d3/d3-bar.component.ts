@@ -18,7 +18,7 @@ export class D3BarComponent implements OnDestroy {
   yAxisLabel = 'Population';
   colorScheme: any;
   themeSubscription: any; 
-  private getBValues:any = [];
+  public getBValues:any = [];
   private allinfos:any = [];
   private getBarchart:any = [];
   private chartsType:any = ['barchart','combochart'];

@@ -20,7 +20,7 @@ export class SmartTableComponent {
   private tabledata:any = []; 
   private tablesize:any = []; 
   private newColumnData:any = [];
-  private tabletitle:string = 'title';
+  public tabletitle:string = 'title';
  settings = {
     actions: false,
     columns: {}
