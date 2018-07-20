@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
 import { ApiService } from '../../../@core/data/api.service';
 import { StorageService } from '../../../@core/data/storage.service';
+import { MasheyService } from '../../../@core/data/mashey.service';
 
 @Component({
   selector: 'ngx-d3-bar',
@@ -21,55 +22,29 @@ export class D3BarComponent implements OnDestroy {
   public getBValues:any = [];
   private allinfos:any = [];
   private getBarchart:any = [];
-  private chartsType:any = ['barchart','combochart'];
+  private objecttype:string = 'barchart';
+  public emptyDataMessage:string = null; 
 
-
-  constructor(private theme: NbThemeService,private apiservice:ApiService,private accessStorage:StorageService) {
+  constructor(private theme: NbThemeService,private apiservice:ApiService,private accessStorage:StorageService,private masheyservice:MasheyService) {
     this.themeSubscription = this.theme.getJsTheme().subscribe(config => {
       const colors: any = config.variables;
       this.colorScheme = {
         domain: [colors.primaryLight, colors.infoLight, colors.successLight, colors.warningLight, colors.dangerLight],
       };
-    });
-    this.getAppinfos();
-  }
-  getAppinfos(){
-    let accessValue = this.accessStorage.getFromLocal('allInfos');
-    console.log(accessValue);
-    if(accessValue == ''){ 
-    this.apiservice.getAppinfos('test').subscribe(data=>{ 
-        this.allinfos = data; 
-        this.allinfos.forEach(element => {
-          if(this.chartsType.includes(element.type)){
-            let elementData = element.data; 
-            this.getBarchart = [];
-            if(elementData!=''){ 
-              elementData.forEach(e => {
-                let qValue = e[1].qNum == "NaN" ? 0 : e[1].qNum;
-                this.getBarchart.push({name: e[0].qText,value: qValue}) 
-              });  
-              this.getBValues.push({data:this.getBarchart,title:element.title});  
-            } 
-        }
-        }); 
-    })
-    }else{
-      accessValue.forEach(element => {  
-        if(this.chartsType.includes(element.type)){
-            let elementData = element.data; 
-            this.getBarchart = [];
-            if(elementData!=''){ 
-              elementData.forEach(e => {
-                let qValue = e[1].qNum == "NaN" ? 0 : e[1].qNum;
-                this.getBarchart.push({name: e[0].qText,value: qValue}) 
-              });  
-              this.getBValues.push({data:this.getBarchart,title:element.title});  
-            } 
-        }    
-      })
-      console.log(this.getBValues); 
-    }
-   }
+    });  
+    this.getAppData(this.accessStorage.getFromLocal('appId')); 
+  }  
+
+  async getAppData(value){
+      let barValues= [];this.emptyDataMessage = null;
+      let response = await this.masheyservice.loadAppinfos(value,this.objecttype); 
+      console.log(response);
+      if(response[0].hasOwnProperty("error")){
+        this.emptyDataMessage = response[0].error; 
+      }else{
+        this.getBValues = response;
+      }   
+  } 
   ngOnDestroy(): void {
     this.themeSubscription.unsubscribe();
   }

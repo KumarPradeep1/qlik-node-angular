@@ -4,6 +4,7 @@ import { LocalDataSource } from 'ng2-smart-table';
 import { SmartTableService } from '../../../@core/data/smart-table.service';
 import { ApiService } from '../../../@core/data/api.service';
 import { StorageService } from '../../../@core/data/storage.service';
+import { MasheyService } from '../../../@core/data/mashey.service';
 
 @Component({
   selector: 'ngx-smart-table',
@@ -17,10 +18,10 @@ import { StorageService } from '../../../@core/data/storage.service';
 export class SmartTableComponent {
 
   private allinfos:any = []; 
-  private tabledata:any = []; 
-  private tablesize:any = []; 
-  private newColumnData:any = [];
-  public tabletitle:string = 'title';
+  private tabledata:any = [];  
+  public tabletitle:string  = null; 
+  private objecttype:string = 'table';
+  public emptyDataMessage:string = null;
  settings = {
     actions: false,
     columns: {}
@@ -28,71 +29,22 @@ export class SmartTableComponent {
 
   source: LocalDataSource = new LocalDataSource();
 
-  constructor(private service: SmartTableService,private apiservice:ApiService,private accessStorage:StorageService) { 
-    this.getAppinfos();
+  constructor(private service: SmartTableService,private apiservice:ApiService,private accessStorage:StorageService,private masheyservice:MasheyService) { 
+    this.getAppData(this.accessStorage.getFromLocal('appId'));
   }
-  getAppinfos(){
-    let accessValue = this.accessStorage.getFromLocal('allInfos'); 
-    if(!accessValue){ 
-     this.apiservice.getAppinfos('test').subscribe(data=>{ 
-        this.allinfos = data; 
-        this.accessStorage.saveInLocal('allInfos',this.allinfos);
-        this.allinfos.forEach(element => {
-          if(element.type == 'table'){ 
-            let elementData = element.data;
-            this.tabletitle = element.title;
-            //this.tablesize = element.tableproperty.qHyperCube.qSize.qcx;
-            let getHeader = element.tableproperty.qHyperCube.qDimensionInfo;
-            var obj = {}; 
-            getHeader.forEach(gH=>{
-             let tableColumnvalue = {title: gH.qFallbackTitle,type: 'string'};
-             let tableColumnname = tableColumnvalue.title.split(" ").join("").toLocaleLowerCase(); 
-             obj[tableColumnname] = tableColumnvalue;   
-            })
-            this.settings.columns = obj; 
-            elementData.forEach(e => { 
-              let info = {};
-              Object.keys(obj).map(function(key, index) {  
-                info[key] = e[index].qText;
-              }) ; 
-              this.tabledata.push(info); 
-            });  
-           this.source.load(this.tabledata);
-          }
-        }); 
-      }) 
-     }else{  
-        accessValue.forEach(element => { 
-          if(element.type == 'table'){ 
-            let elementData = element.data;
-            this.tabletitle = element.title;
-            //this.tablesize = element.tableproperty.qHyperCube.qSize.qcx;
-            let getHeader = element.tableproperty.qHyperCube.qDimensionInfo;
-            var obj = {}; 
-            getHeader.forEach(gH=>{
-             let tableColumnvalue = {title: gH.qFallbackTitle,type: 'string'};
-             let tableColumnname = tableColumnvalue.title.split(" ").join("").toLocaleLowerCase(); 
-             obj[tableColumnname] = tableColumnvalue;   
-            })
-            this.settings.columns = obj; 
-            elementData.forEach(e => { 
-              let info = {};
-              Object.keys(obj).map(function(key, index) {  
-                info[key] = e[index].qText;
-              }) ; 
-              this.tabledata.push(info); 
-            });  
-           this.source.load(this.tabledata);
-          } 
-        })
-         
-     } 
+  async getAppData(value){
+    let tabledata = await this.masheyservice.loadAppinfos(value,this.objecttype);  
+    
+    if(tabledata){
+      tabledata.forEach(data=>{ 
+        if(data.error){
+          this.emptyDataMessage = data.error; 
+        }else{ 
+          this.tabletitle = data.title;
+          this.settings.columns = data.columns; 
+          this.source.load(data.data);
+        } 
+      })
     }
-  onDeleteConfirm(event): void {
-    if (window.confirm('Are you sure you want to delete?')) {
-      event.confirm.resolve();
-    } else {
-      event.confirm.reject();
-    }
-  }
+  } 
 }

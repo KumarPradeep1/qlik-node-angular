@@ -22,8 +22,10 @@ export class DashboardComponent implements OnDestroy {
   public doclists:any = [];
   private docReturn:any = [];
   private allinfos:any = [];
-  public getKPI:any = [];
-  private objecttype:string = 'kpi';
+  public getKPI:any = []; 
+  private objecttype:string = 'kpi'; 
+  public emptyDataMessage:string = null;
+  public showkpi:boolean = false;
 
   lightCard: CardSettings = {
     title: 'Light',
@@ -88,7 +90,7 @@ export class DashboardComponent implements OnDestroy {
       .subscribe(theme => {
         this.statusCards = this.statusCardsByThemes[theme.name];
     });
-    // localStorage.clear()
+    //localStorage.clear() 
     this.getDoclists();
   }
 
@@ -101,8 +103,7 @@ export class DashboardComponent implements OnDestroy {
         if(!this.docReturn.error){
           this.returnDoclists(docdata);
           this.accessStorage.saveInLocal('doclists',this.doclists);
-        }else{
-          console.log(this.docReturn.error);
+        }else{ 
           this.returnDoclists({error: "Error on API --- "+this.docReturn.error.severity});
         }
       },error=>{
@@ -121,12 +122,20 @@ export class DashboardComponent implements OnDestroy {
 
   onAppChange(value){
     if(value){
+      this.showkpi = false; 
       this.getAppData(value);
     }
   }
 
   async getAppData(value){
-    this.getKPI = await this.masheyservice.loadAppinfos(value,this.objecttype);
+    this.emptyDataMessage = null; this.getKPI = [];
+    let response = await this.masheyservice.loadAppinfos(value,this.objecttype);
+    this.showkpi = true; 
+    if(response[0].hasOwnProperty("error")){
+      this.emptyDataMessage = response[0].error; 
+    }else{
+      this.getKPI = response;
+    } 
   }
 
   ngOnDestroy() {

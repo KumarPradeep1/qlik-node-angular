@@ -1,10 +1,16 @@
 <nb-card>
-  <nb-card-header>
+  <nb-card-header *ngIf="tabletitle">
     {{tabletitle}}
   </nb-card-header>
 
   <nb-card-body>
-    <ng2-smart-table [settings]="settings" [source]="source" >
-    </ng2-smart-table>
+  <div *ngIf="!emptyDataMessage">
+  <ng2-smart-table [settings]="settings" [source]="source" >
+  </ng2-smart-table>
+  </div>
+  <div class="alert alert-danger" *ngIf="emptyDataMessage">
+  {{emptyDataMessage}}
+  </div>
   </nb-card-body>
+
 </nb-card>

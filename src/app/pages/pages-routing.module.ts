@@ -5,7 +5,6 @@ import { PagesComponent } from './pages.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NotFoundComponent } from './miscellaneous/not-found/not-found.component';
 import { AuthGuard } from './pages-routing.guard';
-
 const routes: Routes = [{
   path: '',
   component: PagesComponent,
@@ -13,10 +12,11 @@ const routes: Routes = [{
   {
     path: 'dashboard',
     component: DashboardComponent,
+    
       
   }, {
     path: 'charts',
-    loadChildren: './charts/charts.module#ChartsModule', canActivate: [AuthGuard] 
+    loadChildren: './charts/charts.module#ChartsModule',canActivate: [AuthGuard]
   },   
   {
     path: '',
@@ -25,7 +25,7 @@ const routes: Routes = [{
   }, 
   {
     path: 'tables',
-    loadChildren: './tables/tables.module#TablesModule', canActivate: [AuthGuard]
+    loadChildren: './tables/tables.module#TablesModule',canActivate: [AuthGuard]
   }, 
   {
     path: '**',
