@@ -15,8 +15,8 @@ export class D3BarComponent implements OnDestroy {
   showLegend = true;
   showXAxis = true;
   showYAxis = true;
-  xAxisLabel = 'Country';
-  yAxisLabel = 'Population';
+  xAxisLabel:string = null;  
+  yAxisLabel:string = null;  
   colorScheme: any;
   themeSubscription: any; 
   public getBValues:any = [];
@@ -36,12 +36,11 @@ export class D3BarComponent implements OnDestroy {
   }  
 
   async getAppData(value){
-      let barValues= [];this.emptyDataMessage = null;
-      let response = await this.masheyservice.loadAppinfos(value,this.objecttype); 
-      console.log(response);
+      this.emptyDataMessage = null;
+      let response = await this.masheyservice.loadAppinfos(value,this.objecttype);  
       if(response[0].hasOwnProperty("error")){
         this.emptyDataMessage = response[0].error; 
-      }else{
+      }else{ 
         this.getBValues = response;
       }   
   } 

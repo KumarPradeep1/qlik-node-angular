@@ -32,7 +32,7 @@ export class MasheyService {
     
     if (app_data != undefined && app_data!='' && !app_data.error){   
 
-      app_data.forEach(element => {
+      app_data.forEach((element, index) => {
         if(element.type == objecttype){  
           if(objecttype == 'kpi'){
               results_data.push(element); 
@@ -41,8 +41,7 @@ export class MasheyService {
           else if(objecttype == 'table'){ 
               let elementData = element.data;
               let tabletitle = element.title;  
-              var obj = {}; 
-              console.log(element);
+              var obj = {};  
               if(element.tableproperty){ 
                 let getHeader = element.tableproperty.qHyperCube.qDimensionInfo;
                 getHeader.forEach(gH=>{
@@ -51,18 +50,20 @@ export class MasheyService {
                 obj[tableColumnname] = tableColumnvalue;   
                 });
               }
+              getData = [];
               elementData.forEach(e => { 
                 let info = {};
                 Object.keys(obj).map(function(key, index) {  
                   info[key] = e[index].qText;
                 }) ; 
                 getData.push(info); 
-              }); 
+              });  
               results_data.push({columns: obj,data: getData,title:tabletitle});
           }
          
           else if(objecttype != 'kpi'){ 
               let elementData = element.data;   
+              getData = [];
               if(elementData!=''){ 
                 elementData.forEach(e => {
                   let qValue = e[1].qNum == "NaN" ? 0 : e[1].qNum;
