@@ -15,27 +15,22 @@ let HyperCubeDefParams = [{
     qLeft: 0,
     qWidth: 10,
     qHeight: 100
-    }]
-
-// let config = {
-//   host: 'qlik.mashey.com',
-//   isSecure: true,
-//   prefix:'hdr',
-//   appname: appid,
-//   headers: {
-//   'Content-Type':'application/json',
-//   'x-qlik-xrfkey' : 'abcdefghijklmnop',
-//   'hdr-usr': 'MASHEY\\andrew'
-//   }
-// }
-
+    }];
+    
 function auth_params(appid){
   let config = {
-    host: 'sense-demo.qlik.com',
-    isSecure: true,
-    prefix:'',
-    appname: appid
-  };
+      host: 'qlik.mashey.com',
+      isSecure: true,
+      prefix:'hdr' ,
+      headers: {
+      'Content-Type':'application/json',
+      'x-qlik-xrfkey' : 'abcdefghijklmnop',
+      'hdr-usr': 'MASHEY\\Techmango'
+      }, 
+  }
+  if(appid != 'doclists'){
+    config['appname'] = appid;
+  } 
   return config
 }
 
@@ -56,8 +51,9 @@ app.get('/', (req, res) => {
 });
 
 // Get Qlik app raw data for all elements
-app.get('/appinfo/:appId', (req, res) => {
-  config = auth_params(req.params.appId)
+app.get('/appinfo/:appId', (req, res) => { 
+  let appId = req.params.appId;
+  config = auth_params(appId)
 	qsocks.ConnectOpenApp(config)
   .then(function(connections) {
   	qlik_app = connections[1];
@@ -109,7 +105,7 @@ app.get('/appinfo/:appId', (req, res) => {
 
   	Promise.all(promises).then(function(values){
       result = {}
-      result[appid] = values
+      result[appId] = values
   	  res.send(result);
   	});
 	})
@@ -122,12 +118,10 @@ app.get('/appinfo/:appId', (req, res) => {
 
 // Get all Docs list
 app.get('/doclists', (req, res) => {
-  config = auth_params("aaaaa")
-  qsocks.ConnectOpenApp(config)
-  .then(function(connections) {
-    var global = connections[0];
-    qlik_app = connections[1];
-    global.getDocList().then(function(doclist) {
+  config = auth_params("doclists")
+  qsocks.Connect(config)
+  .then(function(connections) { 
+    connections.getDocList().then(function(doclist) {
         res.send(doclist);
     });
   })
